@@ -882,6 +882,27 @@ static ngx_buf_t * ngx_http_push_request_body_to_single_buffer(ngx_http_request_
   return buf;
 }
 
+static ngx_str_t * ngx_http_push_find_in_header_value(ngx_http_request_t * r, ngx_str_t header_name) {
+  ngx_uint_t                       i;
+  ngx_list_part_t                 *part = &r->headers_in.headers.part;
+  ngx_table_elt_t                 *header= part->elts;
+  
+  for (i = 0; /* void */ ; i++) {
+    if (i >= part->nelts) {
+      if (part->next == NULL) {
+        break;
+      }
+      part = part->next;
+      header = part->elts;
+      i = 0;
+    }
+    if (header[i].key.len == header_name.len
+      && ngx_strncasecmp(header[i].key.data, header_name.data, header[i].key.len) == 0) {
+      return &header[i].value;
+      }
+  }
+  return NULL;
+}
 
 static ngx_http_push_msg_t * ngx_http_push_store_create_message(ngx_http_push_channel_t *channel, ngx_http_request_t *r) {
   ngx_buf_t                      *buf = NULL, *buf_copy;
@@ -924,8 +945,15 @@ static ngx_http_push_msg_t * ngx_http_push_store_create_message(ngx_http_push_ch
   
   msg->buf=buf_copy;
   
-  //Stamp the new message with entity tags
-  msg->message_time=ngx_time(); //ESSENTIAL TODO: make sure this ends up producing GMT time
+  
+  ngx_str_t *x_date = ngx_http_push_find_in_header_value(r, NGX_HTTP_PUSH_HEADER_X_DATE);
+  if(x_date) {
+      msg->message_time= atol((const char *)x_date->data);
+  }
+  else {
+      //Stamp the new message with entity tags
+      msg->message_time=ngx_time(); //ESSENTIAL TODO: make sure this ends up producing GMT time
+  }
   msg->message_tag=(previous_msg!=NULL && msg->message_time == previous_msg->message_time) ? (previous_msg->message_tag + 1) : 0;    
   
   //store the content-type

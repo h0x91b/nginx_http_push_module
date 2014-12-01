@@ -52,6 +52,7 @@ extern const  ngx_str_t NGX_HTTP_PUSH_HEADER_PRAGMA;
 extern const  ngx_str_t NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_METHODS;
 extern const  ngx_str_t NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_HEADERS;
 extern const  ngx_str_t NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN;
+extern const  ngx_str_t NGX_HTTP_PUSH_HEADER_X_DATE;
 
 //header values
 extern const  ngx_str_t NGX_HTTP_PUSH_CACHE_CONTROL_VALUE;
