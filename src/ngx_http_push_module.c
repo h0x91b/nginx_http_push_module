@@ -482,6 +482,8 @@ static ngx_int_t ngx_http_push_response_channel_ptr_info(ngx_http_push_channel_t
     messages  = channel->messages;
     ngx_http_push_store->unlock();
     r->headers_out.status = status_code == (ngx_int_t) NULL ? NGX_HTTP_OK : status_code;
+    //HACK, because nginx ignore add_header in config after this response
+    ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN,  &NGX_HTTP_PUSH_ANYSTRING);
     if (status_code == NGX_HTTP_CREATED) {
       r->headers_out.status_line.len =sizeof("201 Created")- 1;
       r->headers_out.status_line.data=(u_char *) "201 Created";
@@ -574,9 +576,9 @@ ngx_int_t ngx_http_push_subscriber_handler(ngx_http_request_t *r) {
       return NGX_DONE;
     
     case NGX_HTTP_OPTIONS:
-      ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN,  &NGX_HTTP_PUSH_ANYSTRING);
-      ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_HEADERS, &NGX_HTTP_PUSH_ACCESS_CONTROL_ALLOWED_SUBSCRIBER_HEADERS);
-      ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_METHODS, &NGX_HTTP_PUSH_ALLOW_GET_OPTIONS);
+      // ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN,  &NGX_HTTP_PUSH_ANYSTRING);
+      // ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_HEADERS, &NGX_HTTP_PUSH_ACCESS_CONTROL_ALLOWED_SUBSCRIBER_HEADERS);
+      // ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_METHODS, &NGX_HTTP_PUSH_ALLOW_GET_OPTIONS);
       r->headers_out.content_length_n = 0;
       r->header_only = 1;
       r->headers_out.status=NGX_HTTP_OK;
@@ -584,7 +586,7 @@ ngx_int_t ngx_http_push_subscriber_handler(ngx_http_request_t *r) {
       return NGX_OK;
       
     default:
-      ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ALLOW, &NGX_HTTP_PUSH_ALLOW_GET_OPTIONS); //valid HTTP for the win
+      // ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ALLOW, &NGX_HTTP_PUSH_ALLOW_GET_OPTIONS); //valid HTTP for the win
       return NGX_HTTP_NOT_ALLOWED;
   }
 }
@@ -629,6 +631,7 @@ static void ngx_http_push_publisher_body_handler(ngx_http_request_t * r) {
     case NGX_HTTP_POST:
     case NGX_HTTP_PUT:
       ngx_http_push_store->publish(channel_id, r, &publish_callback);
+      //? ngx_http_finalize_request(r, ngx_http_push_response_channel_info(channel_id, r, NGX_HTTP_OK));
       break;
       
     case NGX_HTTP_DELETE:
@@ -641,9 +644,9 @@ static void ngx_http_push_publisher_body_handler(ngx_http_request_t * r) {
       break;
       
     case NGX_HTTP_OPTIONS:
-      ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN, &NGX_HTTP_PUSH_ANYSTRING);
-      ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_HEADERS,  &NGX_HTTP_PUSH_ACCESS_CONTROL_ALLOWED_PUBLISHER_HEADERS);
-      ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_METHODS, &NGX_HTTP_PUSH_ALLOW_GET_POST_PUT_DELETE_OPTIONS);
+      // ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN, &NGX_HTTP_PUSH_ANYSTRING);
+      // ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_HEADERS,  &NGX_HTTP_PUSH_ACCESS_CONTROL_ALLOWED_PUBLISHER_HEADERS);
+      // ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_METHODS, &NGX_HTTP_PUSH_ALLOW_GET_POST_PUT_DELETE_OPTIONS);
       r->header_only = 1;
       r->headers_out.content_length_n = 0;
       r->headers_out.status=NGX_HTTP_OK;
@@ -653,7 +656,7 @@ static void ngx_http_push_publisher_body_handler(ngx_http_request_t * r) {
       
     default:
       //some other weird request method
-      ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ALLOW, &NGX_HTTP_PUSH_ALLOW_GET_POST_PUT_DELETE_OPTIONS);
+      // ngx_http_push_add_response_header(r, &NGX_HTTP_PUSH_HEADER_ALLOW, &NGX_HTTP_PUSH_ALLOW_GET_POST_PUT_DELETE_OPTIONS);
       ngx_http_finalize_request(r, NGX_HTTP_NOT_ALLOWED);
       break;
   }
