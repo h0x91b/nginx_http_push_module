@@ -12,6 +12,7 @@ const  ngx_str_t NGX_HTTP_PUSH_HEADER_PRAGMA = ngx_string("Pragma");
 const  ngx_str_t NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_HEADERS = ngx_string("Access-Control-Allow-Headers");
 const  ngx_str_t NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_METHODS = ngx_string("Access-Control-Allow-Methods");
 const  ngx_str_t NGX_HTTP_PUSH_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN = ngx_string("Access-Control-Allow-Origin");
+const  ngx_str_t NGX_HTTP_PUSH_HEADER_X_DATE = ngx_string("X-Date");
 
 //header values
 const  ngx_str_t NGX_HTTP_PUSH_CACHE_CONTROL_VALUE = ngx_string("no-cache");
@@ -23,7 +24,7 @@ const  ngx_str_t NGX_HTTP_PUSH_HTTP_STATUS_410 = ngx_string("410 Gone");
 //other stuff
 const  ngx_str_t NGX_HTTP_PUSH_ANYSTRING= ngx_string("*");
 const  ngx_str_t NGX_HTTP_PUSH_ACCESS_CONTROL_ALLOWED_PUBLISHER_HEADERS = ngx_string("Content-Type, Origin");
-const  ngx_str_t NGX_HTTP_PUSH_ACCESS_CONTROL_ALLOWED_SUBSCRIBER_HEADERS = ngx_string("If-None-Match, If-Modified-Since, Origin");
+const  ngx_str_t NGX_HTTP_PUSH_ACCESS_CONTROL_ALLOWED_SUBSCRIBER_HEADERS = ngx_string("If-None-Match, If-Modified-Since, Origin, X-Date");
 const  ngx_str_t NGX_HTTP_PUSH_ALLOW_GET_POST_PUT_DELETE_OPTIONS= ngx_string("GET, POST, PUT, DELETE, OPTIONS");
 const  ngx_str_t NGX_HTTP_PUSH_ALLOW_GET_OPTIONS= ngx_string("GET, OPTIONS");
 const  ngx_str_t NGX_HTTP_PUSH_VARY_HEADER_VALUE = ngx_string("If-None-Match, If-Modified-Since");
